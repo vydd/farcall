@@ -78,7 +78,9 @@
 (defun @auth (next)
   (let ((authorized
          (handler-case
-             (funcall *authorizer* (hunchentoot:header-in* "authorization"))
+             (funcall *authorizer*
+                      (jsonrpc->rpc (hunchentoot:raw-post-data :force-text t))
+                      (hunchentoot:header-in* "authorization"))
            (condition () nil))))
     (if authorized
         (funcall next)
