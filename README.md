@@ -101,11 +101,11 @@ Defines a remote procedure call using syntax similar to DEFUN. Should be used in
 
 ## Plan
 
-[ ] Complete JSON-RPC 2.0 support (add batching)
-[ ] Settle on the API
-[ ] Publish on Quicklisp
-[ ] Implement [OpenRPC](https://open-rpc.org)
-[ ] Implement the client part of the library with remote procedure
+- [ ] Complete JSON-RPC 2.0 support (add batching)
+- [ ] Settle on the API
+- [ ] Publish on Quicklisp
+- [ ] Implement [OpenRPC](https://open-rpc.org)
+- [ ] Implement the client part of the library with remote procedure
     stubs automatically generated from OpenRPC specification
 
 ## Resources
