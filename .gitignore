@@ -1,0 +1,7 @@
+system-index.txt
+*.fasl
+*.falsl
+*.dx64fsl
+.\#*
+\#*
+*~
