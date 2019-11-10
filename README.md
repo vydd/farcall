@@ -10,7 +10,9 @@ Please keep in mind that the API should not be considered stable. This is expect
 
 Currently only tested (and known to work) with
 
-| CCL | Version 1.12-dev (v1.12-dev.5) DarwinX8664 |
+| Lisp  | Version                | Platform    |
+| ----- | ---------------------- | ----------- |
+| CCL   | 1.12-dev (v1.12-dev.5) | DarwinX8664 |
 
 If you decide to test the library, please post a PR with results.
 
