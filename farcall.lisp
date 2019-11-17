@@ -49,8 +49,13 @@
   (let ((function (gethash (cdr (assoc :method rpc)) *rpc-table*))
         (params (cdr (assoc :params rpc))))
     (if (alistp params)
-        (apply function (alexandria:alist-plist params))
+        (apply function (order-params function params))
         (apply function params))))
+
+(defun order-params (function params)
+  (loop
+     :for a :in (interned-arglist function)
+     :collect (cdr (assoc (intern (string a) :keyword) params))))
 
 (defun valid-rpc-method-p (rpc)
   (handler-case
@@ -67,10 +72,14 @@
               ((alistp params)
                (not (set-exclusive-or
                      (mapcar #'alexandria:symbolicate (mapcar #'car params))
-                     (trivial-arguments:arglist function))))
+                     (interned-arglist function))))
               ((listp params)
-               (= (length params) (length (trivial-arguments:arglist function))))))))
+               (= (length params) (length (interned-arglist function))))))))
     (condition () nil)))
+
+(defun interned-arglist (function)
+  (mapcar (lambda (x) (intern (string x)))
+          (trivial-arguments:arglist function)))
 
 (defun alistp (list)
   (consp (car list)))
@@ -97,7 +106,7 @@
 (defun make-method-description (method)
   (let ((function (gethash method *rpc-table*)))
     `((:method . ,method)
-      (:params . ,(trivial-arguments:arglist function))
+      (:params . ,(interned-arglist function))
       (:documentation . ,(documentation function 'function)))))
 
 (easy-routes:defroute rpc ("/" :method :post :decorators (@auth)) ()
@@ -126,11 +135,12 @@
 (defun jsonrpc->rpc (payload)
   (let* ((jsonrpc (json:decode-json-from-string payload))
          (version (cdr (assoc :jsonrpc jsonrpc)))
-         (method (cdr (assoc :method jsonrpc)))
-         (params (cdr (assoc :params jsonrpc))))
+         (method (cdr (assoc :method jsonrpc))))
     (when (not (assoc :id jsonrpc))
       (push '(:id . nil) jsonrpc))
-    (when (and method params version
+    (when (not (assoc :params jsonrpc))
+      (push '(:params .nil) jsonrpc))
+    (when (and method version
                (string-equal "2.0" (cdr (assoc :jsonrpc jsonrpc))))
       jsonrpc)))
 
